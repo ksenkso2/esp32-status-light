@@ -7,6 +7,6 @@ if [ "$#" -gt 1 ]; then
     exit 2
 fi
 if [ "$#" -eq 1 ]; then
-    exec python3 configure_wifi.py --ssid "$1" --password-file "$HOME/.wifi"
+    exec python3 configure_wifi.py --ssid "$1"
 fi
-exec python3 configure_wifi.py --password-file "$HOME/.wifi"
+exec python3 configure_wifi.py

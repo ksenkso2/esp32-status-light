@@ -18,15 +18,26 @@ def parse_credentials(text):
             raise ValueError("The JSON credentials need a password field")
         return ssid, password
 
+    lines = stripped.splitlines()
     values = {}
-    for line in stripped.splitlines():
+    for line in lines:
         key, separator, value = line.partition("=")
         if separator:
             values[key.strip().lower()] = value.strip().strip("\"'")
 
     password = values.get("password") or values.get("wifi_password")
     if password is None:
-        password = stripped
+        for line in lines:
+            candidate = line.strip()
+            key, separator, _ = candidate.partition("=")
+            if not separator or key.strip().lower() not in {
+                "ssid",
+                "wifi_ssid",
+                "password",
+                "wifi_password",
+            }:
+                password = candidate
+                break
     ssid = values.get("ssid") or values.get("wifi_ssid")
     if not password:
         raise ValueError("The Wi-Fi password is empty")
@@ -38,7 +49,11 @@ def main():
         description="Create a local ESP32 credentials header without displaying secrets"
     )
     parser.add_argument("--ssid", help="Wi-Fi network name, unless stored in the file")
-    parser.add_argument("--password-file", type=Path, default=Path.home() / ".wifi")
+    parser.add_argument(
+        "--password-file",
+        type=Path,
+        default=Path(__file__).resolve().parent / ".wifi",
+    )
     parser.add_argument(
         "--output",
         type=Path,
@@ -52,7 +67,7 @@ def main():
         parser.error(str(error))
     ssid = args.ssid or file_ssid
     if not ssid:
-        parser.error("Provide the Wi-Fi network name with --ssid")
+        parser.error("Add ssid to the credentials file or provide --ssid")
 
     content = (
         "#pragma once\n\n"

@@ -28,20 +28,23 @@ The ESP32 should provide `GET /status`, `POST /status`, and `GET /health`. No cl
 - `firmware/lib/StatusLight/`: state parsing, LED control, and persistent state.
 - `client/status_client.py`: Python Tkinter GUI and command-line client.
 - `firmware/configure_wifi.py`: generates the Git-ignored credentials header.
-- `firmware/configure_local_wifi.sh`: local provisioning command for the user.
+- `firmware/generate_credentials.py`: PlatformIO pre-build credential generation hook.
+- `firmware/configure_local_wifi.sh`: optional manual header regeneration command.
 
 ## Credentials
 
-Never read, print, copy, or commit `~/.wifi` or `firmware/include/secrets.h` in an agent session. Do not expose their contents in logs, diffs, or command output.
+Never read, print, copy, or commit `firmware/.wifi` or `firmware/include/secrets.h` in an agent session. Do not expose their contents in logs, diffs, or command output.
 
-When credentials are needed, ask the user to run this from the repository root:
+Store local settings in `firmware/.wifi`, using this format:
 
-```sh
-cd firmware
-./configure_local_wifi.sh 'your-wifi-ssid'
+```ini
+ssid=your-wifi-ssid
+password=your-wifi-password
 ```
 
-The SSID argument can be omitted if it is stored in the local credentials file. The helper reads the password locally without displaying it. The generated header is Git-ignored.
+A legacy bare password line can also be combined with an `ssid=...` line. Both this file and the generated header are Git-ignored. Each checkout needs its own `.wifi`; Git does not sync credentials between machines.
+
+PlatformIO generates `firmware/include/secrets.h` automatically before every build, so agents can run the normal build command without inspecting credentials or asking the user to generate the header. `configure_local_wifi.sh` remains available for optional manual regeneration.
 
 ## Commands
 

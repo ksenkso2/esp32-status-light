@@ -2,5 +2,6 @@
 **/.pio/
 __pycache__/
 *.pyc
+firmware/.wifi
 firmware/include/secrets.h
 client/config.json
