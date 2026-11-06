@@ -26,7 +26,13 @@ The ESP32 should provide `GET /status`, `POST /status`, and `GET /health`. No cl
 - `firmware/`: PlatformIO Arduino firmware.
 - `firmware/src/main.cpp`: Wi-Fi, mDNS, HTTP API, and status-light application.
 - `firmware/lib/StatusLight/`: state parsing, LED control, and persistent state.
-- `client/status_client.py`: Python Tkinter GUI and command-line client.
+- `client/status_client.py`: Python Tkinter GUI, command-line client, and shared HTTP `DeviceClient`.
+- `client/status_tray.py`: Ubuntu GNOME AppIndicator tray client.
+- `client/tray_state.py`: background HTTP worker and XDG desired-state persistence.
+- `client/icons/`: tray state and pending/offline icons.
+- `client/install_ubuntu.sh` and `client/uninstall_ubuntu.sh`: per-user XDG autostart setup and removal.
+- `client/status-light.desktop`: autostart template.
+- `client/UBUNTU.md`: Ubuntu 24.04 installation, configuration, and troubleshooting instructions.
 - `firmware/configure_wifi.py`: generates the Git-ignored credentials header.
 - `firmware/generate_credentials.py`: PlatformIO pre-build credential generation hook.
 - `firmware/configure_local_wifi.sh`: optional manual header regeneration command.
@@ -71,12 +77,23 @@ python3 client/status_client.py --host status-light.local --state call
 
 On Ubuntu, Tkinter is provided by the `python3-tk` package if it is not already installed.
 
+Run the Ubuntu tray client and manage its per-user autostart:
+
+```sh
+python3 client/status_tray.py --host status-light.local
+bash client/install_ubuntu.sh
+bash client/uninstall_ubuntu.sh
+```
+
+The tray client requires the Ubuntu system packages documented in `client/UBUNTU.md`. Autostart runs after the user logs into the graphical session. Desired tray state is stored in `~/.config/esp32-status-light/tray.json` or under an absolute `XDG_CONFIG_HOME`; connection settings for autostart are stored separately in `settings.env` in the same directory.
+
 ## Verification
 
 - Build firmware after firmware changes and flash the physical board when available.
 - Ask the user to confirm the physical LED colors; serial output alone cannot verify them.
-- Exercise the client with real HTTP requests against the ESP32 or a temporary local simulator.
-- Test all three GUI buttons, status retrieval, and offline handling.
+- Exercise clients with real HTTP requests against the ESP32 or a temporary local simulator.
+- Test all three GUI buttons or tray selections, status retrieval, desired-state persistence, and offline handling.
+- Verify the tray indicator and XDG autostart on Ubuntu 24.04 before calling those features Ubuntu-verified.
 - Do not claim the Ubuntu application was verified on Ubuntu when it has only run on the Mac.
 - Keep generated credentials, `.venv/`, `.pio/`, and Python caches out of Git.
 
@@ -89,16 +106,17 @@ Completed:
 - Persistent `StatusLight` module with non-default state restoration verified across reboot.
 - Integrated Wi-Fi, mDNS, HTTP API, and reconnect logic, compiled and flashed successfully.
 - Local Wi-Fi credential provisioning without exposing the password.
-- Desktop GUI and CLI client.
-- GUI button, status retrieval, and offline-handling checks against a local simulator.
+- Desktop GUI, CLI client, and Ubuntu AppIndicator tray client.
+- Per-user XDG autostart installer, uninstaller, and Russian Ubuntu documentation.
+- GUI button, tray state, persistence, status retrieval, retry, and offline-handling checks against local simulators.
 - Real HTTP health/status checks and all three CLI state changes against the ESP32.
 - User confirmation of blue/red/green hardware states and automatic reconnection after a router outage.
 
 Not completed:
 
-- Ubuntu application verification remains; end-to-end testing was performed on the Mac.
+- Ubuntu 24.04 AppIndicator display, graphical-session autostart, and end-to-end client verification on Ubuntu remain; current tray checks were performed on the Mac.
 
 Next steps:
 
-1. Run the desktop client on Ubuntu against `status-light.local`.
-2. Test all three GUI buttons, status refresh, and offline handling on Ubuntu.
+1. Install the documented dependencies and run `bash client/install_ubuntu.sh` on Ubuntu 24.04.
+2. Verify all three tray selections, pending/offline retry, status refresh, persistence, and autostart on Ubuntu against `status-light.local`.

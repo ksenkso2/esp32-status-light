@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=ESP32 Status Light
+Comment=Control the ESP32 status light from the system tray
+Exec=@EXEC@
+Icon=network-transmit-receive
+Terminal=false
+Categories=Utility;Network;
+Keywords=ESP32;status;light;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
