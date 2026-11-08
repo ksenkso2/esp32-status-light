@@ -36,6 +36,12 @@ The ESP32 should provide `GET /status`, `POST /status`, and `GET /health`. No cl
 - `firmware/configure_wifi.py`: generates the Git-ignored credentials header.
 - `firmware/generate_credentials.py`: PlatformIO pre-build credential generation hook.
 - `firmware/configure_local_wifi.sh`: optional manual header regeneration command.
+- `case/enclosure.py`: parametric CadQuery enclosure for the user's S3-N16R8-compatible board (GPIO48, USB-C, module antenna overhang).
+- `case/index.html`: offline interactive 3D preview with assembled, exploded, and print-layout views.
+- `case/stl/`: print-oriented base, lid, diffuser, and USB-insert STL meshes.
+- `case/PRINT.txt` and `case/esp32-status-light-case.zip`: printer handoff instructions and bundle.
+- `.github/workflows/pages.yml`: deploys `case/` to GitHub Pages at `https://ksenkso2.github.io/esp32-status-light/` when the viewer changes on `main`.
+- `README.md`: repository overview with public viewer and printer-bundle links.
 
 ## Credentials
 
@@ -87,6 +93,13 @@ bash client/uninstall_ubuntu.sh
 
 The tray client requires the Ubuntu system packages documented in `client/UBUNTU.md`. Autostart runs after the user logs into the graphical session. Desired tray state is stored in `~/.config/esp32-status-light/tray.json` or under an absolute `XDG_CONFIG_HOME`; connection settings for autostart are stored separately in `settings.env` in the same directory.
 
+Regenerate the enclosure with CadQuery 2.8+ and open its offline preview from the repository root:
+
+```sh
+python3 case/enclosure.py --output-dir case/stl
+open case/index.html
+```
+
 ## Verification
 
 - Build firmware after firmware changes and flash the physical board when available.
@@ -95,6 +108,8 @@ The tray client requires the Ubuntu system packages documented in `client/UBUNTU
 - Test all three GUI buttons or tray selections, status retrieval, desired-state persistence, and offline handling.
 - Verify the tray indicator and XDG autostart on Ubuntu 24.04 before calling those features Ubuntu-verified.
 - Do not claim the Ubuntu application was verified on Ubuntu when it has only run on the Mac.
+- Check enclosure solids and PCB clearance after CAD changes; validate exported meshes and exercise the offline viewer in a browser.
+- Do not claim the enclosure is physically verified until a printed set has been fitted to the real board and USB cable.
 - Keep generated credentials, `.venv/`, `.pio/`, and Python caches out of Git.
 
 ## Current status
@@ -111,12 +126,15 @@ Completed:
 - GUI button, tray state, persistence, status retrieval, retry, and offline-handling checks against local simulators.
 - Real HTTP health/status checks and all three CLI state changes against the ESP32.
 - User confirmation of blue/red/green hardware states and automatic reconnection after a router outage.
+- Parametric four-part enclosure with a removable USB insert, side vents, and board locating stops; offline interactive preview, watertight print-oriented STLs, and printer handoff bundle.
 
 Not completed:
 
 - Ubuntu 24.04 AppIndicator display, graphical-session autostart, and end-to-end client verification on Ubuntu remain; current tray checks were performed on the Mac.
+- Physical printing, board/USB-insert fit, cable clearance, lid friction, and LED visibility through the diffuser remain unverified.
 
 Next steps:
 
 1. Install the documented dependencies and run `bash client/install_ubuntu.sh` on Ubuntu 24.04.
 2. Verify all three tray selections, pending/offline retry, status refresh, persistence, and autostart on Ubuntu against `status-light.local`.
+3. Print the enclosure, check the real board and USB cable, and adjust the insert, `fit_clearance`, or LED placement if needed.

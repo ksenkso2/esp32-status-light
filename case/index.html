@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Status Light — корпус</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">ESP32 STATUS LIGHT</p>
+      <h1>Корпус «Graphite»</h1>
+    </div>
+    <div class="size-badge"><span>70 × 34 × 17</span><small>мм, с рассеивателем</small></div>
+  </header>
+
+  <main>
+    <section class="viewport-panel">
+      <div id="viewport" aria-label="Интерактивная 3D-модель корпуса"></div>
+      <div class="viewport-top">
+        <div class="mode-switch" role="group" aria-label="Режим просмотра">
+          <button class="active" data-mode="assembled">В сборе</button>
+          <button data-mode="exploded">Детали</button>
+          <button data-mode="print">На печать</button>
+        </div>
+        <span id="state-pill" class="state-pill free">Свободен</span>
+      </div>
+      <div class="viewport-bottom">
+        <span>ЛКМ — вращать · колесо — масштаб · ПКМ — сдвиг</span>
+        <button id="reset-view" class="text-button">Сбросить вид</button>
+      </div>
+      <noscript>Для 3D-просмотра включите JavaScript. STL-файлы доступны справа.</noscript>
+    </section>
+
+    <aside class="controls">
+      <section>
+        <h2>Статус светодиода</h2>
+        <div class="status-grid">
+          <button class="status active free" data-state="free"><i></i>Свободен</button>
+          <button class="status busy" data-state="busy"><i></i>Занят</button>
+          <button class="status call" data-state="call"><i></i>Звонок</button>
+          <button class="status off" data-state="off"><i></i>Выкл.</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Цвет корпуса</h2>
+        <label class="select-wrap">
+          <span class="sr-only">Цвет корпуса</span>
+          <select id="palette">
+            <option value="graphite">Графит / тёмно-серый</option>
+            <option value="chalk">Мел / тёплый белый</option>
+            <option value="ocean">Океан / синий</option>
+            <option value="clay">Глина / терракотовый</option>
+          </select>
+        </label>
+        <p class="hint">Рассеиватель — натуральный, без красителя.</p>
+      </section>
+
+      <section>
+        <div class="section-row"><h2>Конструкция</h2><span class="tag">4 детали</span></div>
+        <label class="range-row">
+          <span>Разнести детали</span>
+          <input id="explode" type="range" min="0" max="32" value="0" step="1">
+        </label>
+        <label class="check-row"><input id="show-board" type="checkbox" checked><span>Показывать плату</span></label>
+        <label class="check-row"><input id="hide-lid" type="checkbox"><span>Скрыть крышку</span></label>
+        <label class="check-row"><input id="auto-rotate" type="checkbox"><span>Автовращение</span></label>
+      </section>
+
+      <section class="print-info">
+        <h2>Рекомендация для печати</h2>
+        <dl>
+          <div><dt>Корпус</dt><dd>PLA, 0,20 мм</dd></div>
+          <div><dt>Рассеиватель</dt><dd>натуральный PLA</dd></div>
+          <div><dt>Прочность</dt><dd>3 стенки, 20% заполнение</dd></div>
+          <div><dt>Поддержки</dt><dd>только под USB-проёмом</dd></div>
+          <div><dt>Посадка крышки</dt><dd>зазор 0,25 мм/сторона</dd></div>
+        </dl>
+        <p class="hint">STL уже повёрнуты в печатное положение. USB-вставку печатать наружным бортиком на столе.</p>
+      </section>
+
+      <section>
+        <h2>Файлы для мастера</h2>
+        <div class="downloads">
+          <a href="stl/base.stl" download>Основание <span>STL</span></a>
+          <a href="stl/lid.stl" download>Крышка <span>STL</span></a>
+          <a href="stl/diffuser.stl" download>Рассеиватель <span>STL</span></a>
+          <a href="stl/usb-insert.stl" download>USB-вставка <span>STL</span></a>
+          <a class="primary" href="esp32-status-light-case.zip" download>Скачать комплект <span>ZIP</span></a>
+        </div>
+      </section>
+
+      <details>
+        <summary>Перед печатью</summary>
+          <p>PCB 56,50 × 27,40 × 1,65 мм. USB-вставка имеет два отверстия 10,92 × 6,42 мм с межосевым расстоянием 11,83 мм. По две горизонтальные вентиляционные щели 16 × 1,6 мм на длинных сторонах. Плата фиксируется боковыми и торцевыми упорами без прижима крышкой.</p>
+      </details>
+    </aside>
+  </main>
+
+  <footer>Корпус без винтов · съёмная friction-fit крышка · отдельная USB-вставка</footer>
+
+  <script src="vendor/three.min.js"></script>
+  <script src="vendor/OrbitControls.js"></script>
+  <script src="vendor/STLLoader.js"></script>
+  <script src="model-data.js"></script>
+  <script src="board-data.js"></script>
+  <script src="viewer.js"></script>
+</body>
+</html>
